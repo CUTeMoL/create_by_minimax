@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>贪吃蛇</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: #1a1a2e;
+      font-family: Arial, sans-serif;
+    }
+    h1 {
+      color: #eee;
+      margin-bottom: 16px;
+      letter-spacing: 2px;
+    }
+    canvas {
+      background: #16213e;
+      border: 2px solid #0f3460;
+      border-radius: 4px;
+    }
+    .info {
+      color: #aaa;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+    .score {
+      color: #e94560;
+      font-size: 18px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>贪吃蛇</h1>
+  <canvas id="c" width="400" height="400"></canvas>
+  <div class="score">得分: <span id="s">0</span></div>
+  <div class="info">方向键或 WASD 控制，空格键暂停</div>
+
+  <script>
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+    const scoreEl = document.getElementById('s');
+
+    const GRID = 20;
+    const COLS = canvas.width / GRID;
+    const ROWS = canvas.height / GRID;
+
+    let snake, dir, food, score, paused, speed, lastTime, interval;
+
+    function init() {
+      snake = [{x: 10, y: 10}];
+      dir = {x: 1, y: 0};
+      score = 0;
+      paused = false;
+      speed = 120;
+      lastTime = 0;
+      spawnFood();
+      scoreEl.textContent = 0;
+    }
+
+    function spawnFood() {
+      do {
+        food = {
+          x: Math.floor(Math.random() * COLS),
+          y: Math.floor(Math.random() * ROWS)
+        };
+      } while (snake.some(s => s.x === food.x && s.y === food.y));
+    }
+
+    function draw() {
+      ctx.fillStyle = '#16213e';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // grid
+      ctx.strokeStyle = '#1f2f50';
+      for (let x = 0; x <= COLS; x++) {
+        ctx.beginPath();
+        ctx.moveTo(x * GRID, 0);
+        ctx.lineTo(x * GRID, canvas.height);
+        ctx.stroke();
+      }
+      for (let y = 0; y <= ROWS; y++) {
+        ctx.beginPath();
+        ctx.moveTo(0, y * GRID);
+        ctx.lineTo(canvas.width, y * GRID);
+        ctx.stroke();
+      }
+
+      // food
+      ctx.fillStyle = '#e94560';
+      ctx.beginPath();
+      ctx.arc(food.x * GRID + GRID/2, food.y * GRID + GRID/2, GRID/2 - 2, 0, Math.PI * 2);
+      ctx.fill();
+
+      // snake
+      snake.forEach((seg, i) => {
+        ctx.fillStyle = i === 0 ? '#4ecca3' : '#3aa882';
+        ctx.fillRect(seg.x * GRID + 1, seg.y * GRID + 1, GRID - 2, GRID - 2);
+      });
+
+      if (paused) {
+        ctx.fillStyle = 'rgba(0,0,0,0.5)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#fff';
+        ctx.font = '24px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('已暂停', canvas.width/2, canvas.height/2);
+      }
+    }
+
+    function update() {
+      const head = {x: snake[0].x + dir.x, y: snake[0].y + dir.y};
+
+      // wall
+      if (head.x < 0 || head.x >= COLS || head.y < 0 || head.y >= ROWS) {
+        init();
+        draw();
+        return;
+      }
+
+      // self
+      if (snake.some(s => s.x === head.x && s.y === head.y)) {
+        init();
+        draw();
+        return;
+      }
+
+      snake.unshift(head);
+
+      if (head.x === food.x && head.y === food.y) {
+        score += 10;
+        scoreEl.textContent = score;
+        spawnFood();
+      } else {
+        snake.pop();
+      }
+    }
+
+    function loop(ts) {
+      if (ts - lastTime >= interval) {
+        lastTime = ts;
+        if (!paused) update();
+        draw();
+      }
+      requestAnimationFrame(loop);
+    }
+
+    document.addEventListener('keydown', e => {
+      switch(e.key) {
+        case 'ArrowUp': case 'w': case 'W':
+          if (dir.y !== 1) dir = {x:0, y:-1}; break;
+        case 'ArrowDown': case 's': case 'S':
+          if (dir.y !== -1) dir = {x:0, y:1}; break;
+        case 'ArrowLeft': case 'a': case 'A':
+          if (dir.x !== 1) dir = {x:-1, y:0}; break;
+        case 'ArrowRight': case 'd': case 'D':
+          if (dir.x !== -1) dir = {x:1, y:0}; break;
+        case ' ':
+          paused = !paused; break;
+      }
+    });
+
+    init();
+    requestAnimationFrame(loop);
+  </script>
+</body>
+</html>
