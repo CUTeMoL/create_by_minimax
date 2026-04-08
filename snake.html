@@ -52,14 +52,20 @@
     const COLS = canvas.width / GRID;
     const ROWS = canvas.height / GRID;
 
-    let snake, dir, food, score, paused, speed, lastTime, interval;
+    let snake = [{x: 10, y: 10}];
+    let dir = {x: 1, y: 0};
+    let food = {x: 15, y: 10};
+    let score = 0;
+    let paused = false;
+    let speed = 120;
+    let lastTime = 0;
+    const interval = 120;
 
     function init() {
       snake = [{x: 10, y: 10}];
       dir = {x: 1, y: 0};
       score = 0;
       paused = false;
-      speed = 120;
       lastTime = 0;
       spawnFood();
       scoreEl.textContent = 0;
@@ -168,6 +174,7 @@
     });
 
     init();
+    draw(); // 立即绘制第一帧
     requestAnimationFrame(loop);
   </script>
 </body>
