@@ -1,0 +1,2 @@
+# create_by_minimax
+基于minimax的vibecoding产物
