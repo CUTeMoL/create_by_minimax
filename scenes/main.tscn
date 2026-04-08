@@ -1,0 +1,38 @@
+[gd_scene format=3 uid="uid://b0ev5tiegfhec"]
+
+[ext_resource type="Script" uid="uid://djfxx4mt44w1j" path="res://scripts/main.gd" id="1_main"]
+
+[node name="Main" type="Node2D" unique_id=773832198]
+script = ExtResource("1_main")
+
+[node name="ScoreLabel" type="Label" parent="." unique_id=89245427]
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 27.0
+offset_top = 18.0
+offset_right = 102.0
+offset_bottom = 53.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.894, 0.271, 0.376, 1)
+theme_override_font_sizes/font_size = 24
+text = "得分: 0"
+horizontal_alignment = 1
+
+[node name="MessageLabel" type="Label" parent="." unique_id=307045589]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -30.0
+offset_right = 100.0
+offset_bottom = 30.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 20
+text = "
+"
+horizontal_alignment = 1
+vertical_alignment = 1
